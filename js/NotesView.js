@@ -5,9 +5,13 @@ export default class NotesView {
         this.onNoteAdd = onNoteAdd;
         this.onNoteEdit = onNoteEdit;
         this.onNoteDelete = onNoteDelete;
+
         this.root.innerHTML = `
-            <div class="notes__sidebar">
+            <div class="notes__header">
                 <button class="notes__add" type="button">Add Note</button>
+                <button class="notes__toggle">Show Notes</button>
+            </div>
+            <div class="notes__sidebar" style="display: none;">
                 <div class="notes__list"></div>
             </div>
             <div class="notes__preview">
@@ -16,9 +20,18 @@ export default class NotesView {
             </div>
         `;
 
+        this.toggleButton = this.root.querySelector(".notes__toggle");
         const btnAddNote = this.root.querySelector(".notes__add");
         const inpTitle = this.root.querySelector(".notes__title");
         const inpBody = this.root.querySelector(".notes__body");
+        this.notesListContainer = this.root.querySelector(".notes__list");
+        this.sidebar = this.root.querySelector(".notes__sidebar");
+
+        this.toggleButton.addEventListener("click", () => {
+            const isVisible = this.sidebar.style.display === "block";
+            this.sidebar.style.display = isVisible ? "none" : "block";
+            this.toggleButton.textContent = isVisible ? "Show Notes" : "Hide Notes";
+        });
 
         btnAddNote.addEventListener("click", () => {
             this.onNoteAdd();
@@ -52,35 +65,22 @@ export default class NotesView {
             </div>
         `;
     }
-
-    updateNoteList(notes) {
-        const notesListContainer = this.root.querySelector(".notes__list");
-
-        // Empty list
-        notesListContainer.innerHTML = "";
+ updateNoteList(notes) {
+        // 清空列表
+        this.notesListContainer.innerHTML = "";
 
         for (const note of notes) {
             const html = this._createListItemHTML(note.id, note.title, note.body, new Date(note.updated));
-
-            notesListContainer.insertAdjacentHTML("beforeend", html);
+            this.notesListContainer.insertAdjacentHTML("beforeend", html);
         }
 
-        // Add select/delete events for each list item
-        notesListContainer.querySelectorAll(".notes__list-item").forEach(noteListItem => {
+        // 添加選擇事件
+        this.notesListContainer.querySelectorAll(".notes__list-item").forEach(noteListItem => {
             noteListItem.addEventListener("click", () => {
                 this.onNoteSelect(noteListItem.dataset.noteId);
             });
-
-            noteListItem.addEventListener("dblclick", () => {
-                const doDelete = confirm("Are you sure you want to delete this note?");
-
-                if (doDelete) {
-                    this.onNoteDelete(noteListItem.dataset.noteId);
-                }
-            });
         });
     }
-
     updateActiveNote(note) {
         this.root.querySelector(".notes__title").value = note.title;
         this.root.querySelector(".notes__body").value = note.body;
@@ -95,4 +95,7 @@ export default class NotesView {
     updateNotePreviewVisibility(visible) {
         this.root.querySelector(".notes__preview").style.visibility = visible ? "visible" : "hidden";
     }
+
+    // 在 NotesView.js 中的 _handlers 方法中
+
 }
