@@ -7,6 +7,7 @@ body {
 .notes {
     display: flex;
     height: 100%;
+    flex-direction: column; /* 使筆記在小螢幕上垂直排列 */
 }
 
 .notes * {
@@ -18,7 +19,7 @@ body {
     flex-shrink: 0;
     overflow-y: auto;
     padding: 1em;
-    width: 300px;
+    width: 100%; /* 在小螢幕上占滿整個寬度 */
 }
 
 .notes__add {
@@ -92,4 +93,24 @@ body {
     line-height: 1.5;
     margin-top: 2em;
     resize: none;
+}
+
+/* 媒體查詢以適應小螢幕 */
+@media (max-width: 600px) {
+    .notes__sidebar {
+        width: 100%; /* 側邊欄在小螢幕上全寬 */
+        border-right: none; /* 移除分隔線 */
+    }
+
+    .notes__preview {
+        padding: 1em; /* 調整預覽區域的內邊距 */
+    }
+
+    .notes__title {
+        font-size: 2em; /* 調整標題字體大小 */
+    }
+
+    .notes__body {
+        font-size: 1em; /* 調整內容字體大小 */
+    }
 }
